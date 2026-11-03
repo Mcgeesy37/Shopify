@@ -55,14 +55,28 @@
     {% endif %}
     data-testid="header-logo"
   >
-    {% render 'image',
-      image: settings.logo,
-      class: 'header-logo__image',
-      height: settings.logo_height,
-      alt_text_fallback: alt_text_fallback,
-      text_fallback: shop.name,
-      style: logo_style
-    %}
+    {%- if settings.logo != blank -%}
+      {% render 'image',
+        image: settings.logo,
+        class: 'header-logo__image',
+        height: settings.logo_height,
+        alt_text_fallback: alt_text_fallback,
+        text_fallback: shop.name,
+        style: logo_style
+      %}
+    {%- else -%}
+      {%- comment -%} Nordic House: Vektorlogo aus dem Theme, solange im Editor kein Logo gesetzt ist {%- endcomment -%}
+      {%- assign nh_h = settings.logo_height | default: 40 -%}
+      {%- assign nh_h_m = settings.logo_height_mobile | default: 32 -%}
+      <img
+        src="{{ 'nordichouse-logo.svg' | asset_url }}"
+        alt="Nordic House"
+        class="header-logo__image"
+        width="{{ nh_h | times: 3.684 | ceil }}"
+        height="{{ nh_h }}"
+        style="--header-logo-image-width: {{ nh_h | times: 3.684 | ceil }}px; --header-logo-image-width-mobile: {{ nh_h_m | times: 3.684 | ceil }}px; --header-logo-image-height: {{ nh_h }}px; --header-logo-image-height-mobile: {{ nh_h_m }}px;"
+      >
+    {%- endif -%}
   </span>
 
   {% if use_inverse_logo %}
