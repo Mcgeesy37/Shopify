@@ -240,6 +240,13 @@
                 "padding-inline-end": 0
               },
               "blocks": {}
+            },
+            "nh_specs": {
+              "type": "nh-product-specs",
+              "settings": {
+                "show_status": true,
+                "whatsapp_number": ""
+              }
             }
           },
           "block_order": [
@@ -247,6 +254,7 @@
             "divider_VJhene",
             "variant_picker_R3rGDr",
             "buy_buttons_eYQEYi",
+            "nh_specs",
             "text_aEtTtq"
           ]
         },

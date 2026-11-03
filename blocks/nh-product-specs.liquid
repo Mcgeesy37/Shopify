@@ -1,0 +1,134 @@
+{%- comment -%}
+  Nordic House: Steckbrief eines Einzelstuecks auf der Produktseite.
+  Zeigt Status, Masse, Material, Zustand, Epoche und Designer aus den Produkt-Metafeldern
+  und optional einen WhatsApp-Button fuer Rueckfragen zu genau diesem Stueck.
+{%- endcomment -%}
+{%- liquid
+  assign product = closest.product
+  if request.visual_preview_mode and product == blank
+    assign product = collections.all.products.first
+  endif
+  assign m = product.metafields.custom
+  capture nh_status
+    render 'nh-status', product: product
+  endcapture
+  assign nh_status = nh_status | strip
+-%}
+
+{%- if product != blank -%}
+  <div class="nh-specs" {{ block.shopify_attributes }}>
+    {%- if block.settings.show_status -%}
+      <p class="nh-specs__status nh-specs__status--{{ nh_status }}">
+        {%- case nh_status -%}
+          {%- when 'verkauft' -%}{{ 'content.product_badge_sold_out' | t }}
+          {%- when 'reserviert' -%}{{ 'content.product_badge_reserved' | t }}
+          {%- else -%}Verfügbar · Einzelstück
+        {%- endcase -%}
+      </p>
+    {%- endif -%}
+
+    <dl class="nh-specs__list">
+      {%- if m.designer != blank -%}
+        <div class="nh-specs__row"><dt>Designer / Hersteller</dt><dd>{{ m.designer.value }}</dd></div>
+      {%- endif -%}
+      {%- if m.epoche != blank -%}
+        <div class="nh-specs__row"><dt>Epoche</dt><dd>{{ m.epoche.value }}</dd></div>
+      {%- endif -%}
+      {%- if m.material != blank -%}
+        <div class="nh-specs__row"><dt>Material</dt><dd>{{ m.material.value }}</dd></div>
+      {%- endif -%}
+      {%- if m.masse != blank -%}
+        <div class="nh-specs__row"><dt>Maße</dt><dd>{{ m.masse.value | newline_to_br }}</dd></div>
+      {%- endif -%}
+      {%- if m.zustand != blank -%}
+        <div class="nh-specs__row"><dt>Zustand</dt><dd>{{ m.zustand.value }}</dd></div>
+      {%- endif -%}
+    </dl>
+
+    {%- if block.settings.whatsapp_number != blank and nh_status != 'verkauft' -%}
+      {%- capture nh_msg -%}Hallo, ich interessiere mich für „{{ product.title }}“: {{ shop.url }}{{ product.url }}{%- endcapture -%}
+      <a
+        class="nh-specs__whatsapp"
+        href="https://wa.me/{{ block.settings.whatsapp_number | remove: '+' | remove: ' ' | remove: '-' }}?text={{ nh_msg | url_encode }}"
+        target="_blank"
+        rel="noopener"
+      >
+        Frage zu diesem Stück per WhatsApp
+      </a>
+    {%- endif -%}
+  </div>
+{%- endif -%}
+
+{% stylesheet %}
+  .nh-specs {
+    display: grid;
+    gap: 16px;
+    width: 100%;
+  }
+  .nh-specs__status {
+    margin: 0;
+    font-size: 0.8125rem;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+  }
+  .nh-specs__status--reserviert,
+  .nh-specs__status--verkauft {
+    font-weight: 600;
+  }
+  .nh-specs__list {
+    margin: 0;
+    border-top: 1px solid rgb(var(--color-foreground-rgb, 31 29 26) / 0.15);
+  }
+  .nh-specs__row {
+    display: grid;
+    grid-template-columns: minmax(120px, 40%) 1fr;
+    gap: 12px;
+    padding-block: 10px;
+    border-bottom: 1px solid rgb(var(--color-foreground-rgb, 31 29 26) / 0.15);
+  }
+  .nh-specs__row dt {
+    opacity: 0.7;
+  }
+  .nh-specs__row dd {
+    margin: 0;
+  }
+  .nh-specs__whatsapp {
+    display: inline-flex;
+    justify-content: center;
+    align-items: center;
+    min-height: 48px;
+    padding-inline: 20px;
+    border: 1px solid currentColor;
+    color: inherit;
+    text-decoration: none;
+  }
+  .nh-specs__whatsapp:hover {
+    background: rgb(var(--color-foreground-rgb, 31 29 26) / 0.05);
+  }
+{% endstylesheet %}
+
+{% schema %}
+{
+  "name": "Steckbrief Einzelstück",
+  "tag": null,
+  "settings": [
+    {
+      "type": "checkbox",
+      "id": "show_status",
+      "label": "Status anzeigen",
+      "default": true
+    },
+    {
+      "type": "text",
+      "id": "whatsapp_number",
+      "label": "WhatsApp-Nummer",
+      "info": "Internationales Format ohne Leerzeichen, z.B. 4917012345678. Leer lassen, um den Button auszublenden."
+    }
+  ],
+  "presets": [
+    {
+      "name": "Steckbrief Einzelstück"
+    }
+  ]
+}
+{% endschema %}
