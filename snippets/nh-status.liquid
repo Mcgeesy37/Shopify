@@ -1,0 +1,19 @@
+{%- comment -%}
+  Nordic House: Status eines Einzelstuecks.
+  Gibt einen Schluessel aus: verfuegbar | reserviert | verkauft
+  Quelle: Metafeld product.metafields.custom.status (Auswahlliste).
+  Ein Produkt ohne Bestand gilt immer als verkauft.
+  Nutzung: {% capture nh_status %}{% render 'nh-status', product: product %}{% endcapture %}
+{%- endcomment -%}
+{%- liquid
+  assign nh_raw = product.metafields.custom.status.value | default: '' | downcase | strip
+  if product.available == false
+    echo 'verkauft'
+  elsif nh_raw contains 'reserv'
+    echo 'reserviert'
+  elsif nh_raw contains 'verkauf'
+    echo 'verkauft'
+  else
+    echo 'verfuegbar'
+  endif
+-%}
