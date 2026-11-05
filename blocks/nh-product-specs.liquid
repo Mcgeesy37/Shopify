@@ -56,6 +56,10 @@
         Frage zu diesem Stück per WhatsApp
       </a>
     {%- endif -%}
+
+    {%- if block.settings.reservation_note != blank and nh_status == 'verfuegbar' -%}
+      <p class="nh-specs__note">{{ block.settings.reservation_note }}</p>
+    {%- endif -%}
   </div>
 {%- endif -%}
 
@@ -102,6 +106,11 @@
     color: inherit;
     text-decoration: none;
   }
+  .nh-specs__note {
+    margin: 0;
+    font-size: 0.875rem;
+    opacity: 0.75;
+  }
   .nh-specs__whatsapp:hover {
     background: rgb(var(--color-foreground-rgb, 31 29 26) / 0.05);
   }
@@ -123,6 +132,12 @@
       "id": "whatsapp_number",
       "label": "WhatsApp-Nummer",
       "info": "Internationales Format ohne Leerzeichen, z.B. 4917012345678. Leer lassen, um den Button auszublenden."
+    },
+    {
+      "type": "text",
+      "id": "reservation_note",
+      "label": "Hinweis Reservierung und Lieferung",
+      "default": "Kostenlose Lieferung deutschlandweit. Gern reservieren wir dieses Stück 2 Tage für Sie, ohne Anzahlung."
     }
   ],
   "presets": [
